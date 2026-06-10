@@ -7,7 +7,15 @@ import os
 import tempfile
 import requests
 import json
-
+from fastapi.middleware.cors import CORSMiddleware
+app = FastAPI()
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 load_dotenv()
 
 genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
@@ -142,3 +150,5 @@ async def analyze_pdf_url(request: PDFUrlRequest):
 
     except Exception as e:
         return {"error": str(e)}
+
+
