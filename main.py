@@ -46,15 +46,26 @@ async def analyze_pdf(file: UploadFile = File(...)):
         return {"error": "No readable text found in PDF"}
 
     prompt = f"""
-    Summarize this lab report.
+    You are a medical lab report summarizer.
 
-    Return:
-    1. Key findings
-    2. Abnormal values
-    3. Important observations
+    Analyze the report and return ONLY valid JSON.
 
-    Do not diagnose diseases.
-    Do not prescribe medicines.
+    Format:
+
+    {{
+    "english": "WhatsApp-friendly English summary",
+    "malayalam": "WhatsApp-friendly Malayalam summary",
+    "status": "NORMAL or HIGH or LOW or ATTENTION"
+    }}
+
+    Rules:
+    - Simple language
+    - Maximum 100 words
+    - Use emojis
+    - Do not diagnose diseases
+    - Do not prescribe medicines
+    - Mention only important values
+    - Add disclaimer
 
     Lab Report:
     {text[:15000]}
