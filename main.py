@@ -149,22 +149,15 @@ async def analyze_pdf_url(request: PDFUrlRequest):
         return {"error": str(e)}
 
 
-@app.post("/webhook")
+@app.api_route("/webhook", methods=["GET", "POST"])
 async def webhook(request: Request):
 
     body = await request.body()
 
     print("=" * 50)
-    print("RAW BODY:")
-    print(body)
+    print("METHOD:", request.method)
+    print("HEADERS:", dict(request.headers))
+    print("BODY:", body.decode(errors="ignore"))
     print("=" * 50)
-
-    try:
-        if body:
-            data = json.loads(body)
-            print("JSON DATA:")
-            print(json.dumps(data, indent=2))
-    except Exception as e:
-        print("NOT JSON:", str(e))
 
     return {"success": True}
