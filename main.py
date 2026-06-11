@@ -1,4 +1,4 @@
-from fastapi import FastAPI, UploadFile, File
+from fastapi import FastAPI, UploadFile, File,Request
 from pydantic import BaseModel
 import fitz
 import google.generativeai as genai
@@ -149,3 +149,14 @@ async def analyze_pdf_url(request: PDFUrlRequest):
         return {"error": str(e)}
 
 
+@app.post("/webhook")
+async def webhook(request: Request):
+
+    data = await request.json()
+
+    print("=" * 50)
+    print("WHATSAPP WEBHOOK RECEIVED")
+    print(json.dumps(data, indent=2))
+    print("=" * 50)
+
+    return {"success": True}
