@@ -152,11 +152,19 @@ async def analyze_pdf_url(request: PDFUrlRequest):
 @app.post("/webhook")
 async def webhook(request: Request):
 
-    data = await request.json()
+    body = await request.body()
 
     print("=" * 50)
-    print("WHATSAPP WEBHOOK RECEIVED")
-    print(json.dumps(data, indent=2))
+    print("RAW BODY:")
+    print(body)
     print("=" * 50)
+
+    try:
+        if body:
+            data = json.loads(body)
+            print("JSON DATA:")
+            print(json.dumps(data, indent=2))
+    except Exception as e:
+        print("NOT JSON:", str(e))
 
     return {"success": True}
