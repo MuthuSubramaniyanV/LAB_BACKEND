@@ -149,15 +149,50 @@ async def analyze_pdf_url(request: PDFUrlRequest):
         return {"error": str(e)}
 
 
-@app.api_route("/webhook", methods=["GET", "POST"])
+@app.post("/webhook")
 async def webhook(request: Request):
 
-    body = await request.body()
+    try:
+        data = await request.json()
 
-    print("=" * 50)
-    print("METHOD:", request.method)
-    print("HEADERS:", dict(request.headers))
-    print("BODY:", body.decode(errors="ignore"))
-    print("=" * 50)
+        print("=" * 50)
+        print(json.dumps(data, indent=2))
+        print("=" * 50)
 
-    return {"success": True}
+        media = data.get("message", {}).get("media")
+
+        if not media:
+            return {"success": True}
+
+        if media.get("type") != "document":
+            return {"success": True}
+
+        pdf_url = media.get("link")
+
+        response = requests.get(pdf_url, timeout=60)
+
+        if response.status_code != 200:
+            return {"error": "Unable to download PDF"}
+
+        with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as temp_file:
+            temp_file.write(response.content)
+            pdf_path = temp_file.name
+
+        text = extract_text_from_pdf(pdf_path)
+
+        if len(text.strip()) < 20:
+            return {"error": "No readable text found"}
+
+        summary_data = generate_summary(text)
+
+        print("SUMMARY:")
+        print(summary_data)
+
+        return {
+            "success": True,
+            "summary": summary_data
+        }
+
+    except Exception as e:
+        print("WEBHOOK ERROR:", str(e))
+        return {"error": str(e)}
