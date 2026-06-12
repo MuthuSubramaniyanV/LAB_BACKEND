@@ -219,9 +219,11 @@ async def webhook(request: Request):
         print(summary_data)
         phone = data["contact"]["phone_number"]
 
-        language = data["contact"].get("language_code")
+        language = data["contact"].get("result")
 
         print("LANGUAGE =", language)
+        print("CONTACT DATA:")
+        print(data["contact"])
 
         if language and language.lower() in ["malayalam", "ml"]:
             summary_text = summary_data["malayalam"]
