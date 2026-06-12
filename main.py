@@ -147,7 +147,34 @@ async def analyze_pdf_url(request: PDFUrlRequest):
 
     except Exception as e:
         return {"error": str(e)}
+SALEGROWY_TOKEN = os.getenv("SALEGROWY_TOKEN")
 
+VENDOR_UID = "8c423097-9d41-4aa8-b259-e000c8c8ec6d"
+
+SEND_URL = (
+    f"https://app.salegrowy.com/api/"
+    f"{VENDOR_UID}/contact/send-message"
+    f"?token={SALEGROWY_TOKEN}"
+)
+
+
+def send_whatsapp_message(phone_number, message):
+
+    payload = {
+        "phone_number": phone_number,
+        "message_body": message
+    }
+
+    response = requests.post(
+        SEND_URL,
+        json=payload,
+        timeout=30
+    )
+
+    print("SEND STATUS:", response.status_code)
+    print("SEND RESPONSE:", response.text)
+
+    return response.text
 
 @app.post("/webhook")
 async def webhook(request: Request):
@@ -165,6 +192,9 @@ async def webhook(request: Request):
             return {"success": True}
 
         if media.get("type") != "document":
+            return {"success": True}
+
+        if media.get("mime_type") != "application/pdf":
             return {"success": True}
 
         pdf_url = media.get("link")
@@ -187,6 +217,15 @@ async def webhook(request: Request):
 
         print("SUMMARY:")
         print(summary_data)
+        phone = data["contact"]["phone_number"]
+
+        message = (
+        f"📋 Lab Report Summary\n\n"
+        f"{summary_data['english']}\n\n"
+        f"Status: {summary_data['status']}"
+        )
+
+        send_whatsapp_message(phone, message)
 
         return {
             "success": True,
