@@ -185,74 +185,74 @@ async def webhook_malayalam(request: Request):
     print("MALAYALAM ENDPOINT HIT")
     return await process_pdf(request, "malayalam")
 
-# @app.post("/webhook")
-# async def webhook(request: Request):
+@app.post("/webhook")
+async def webhook(request: Request):
 
-#     try:
-#         data = await request.json()
+    try:
+        data = await request.json()
 
-#         print("=" * 50)
-#         print(json.dumps(data, indent=2))
-#         print("=" * 50)
+        print("=" * 50)
+        print(json.dumps(data, indent=2))
+        print("=" * 50)
 
-#         media = data.get("message", {}).get("media")
+        media = data.get("message", {}).get("media")
 
-#         if not media:
-#             return {"success": True}
+        if not media:
+            return {"success": True}
 
-#         if media.get("type") != "document":
-#             return {"success": True}
+        if media.get("type") != "document":
+            return {"success": True}
 
-#         if media.get("mime_type") != "application/pdf":
-#             return {"success": True}
+        if media.get("mime_type") != "application/pdf":
+            return {"success": True}
 
-#         pdf_url = media.get("link")
+        pdf_url = media.get("link")
 
-#         response = requests.get(pdf_url, timeout=60)
+        response = requests.get(pdf_url, timeout=60)
 
-#         if response.status_code != 200:
-#             return {"error": "Unable to download PDF"}
+        if response.status_code != 200:
+            return {"error": "Unable to download PDF"}
 
-#         with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as temp_file:
-#             temp_file.write(response.content)
-#             pdf_path = temp_file.name
+        with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as temp_file:
+            temp_file.write(response.content)
+            pdf_path = temp_file.name
 
-#         text = extract_text_from_pdf(pdf_path)
+        text = extract_text_from_pdf(pdf_path)
 
-#         if len(text.strip()) < 20:
-#             return {"error": "No readable text found"}
+        if len(text.strip()) < 20:
+            return {"error": "No readable text found"}
 
-#         summary_data = generate_summary(text)
+        summary_data = generate_summary(text)
 
-#         print("SUMMARY:")
-#         print(summary_data)
-#         phone = data["contact"]["phone_number"]
+        print("SUMMARY:")
+        print(summary_data)
+        phone = data["contact"]["phone_number"]
 
-#         language = data["contact"].get("language_code")
+        language = data["contact"].get("language_code")
 
-#         print("LANGUAGE =", language)
+        print("LANGUAGE =", language)
 
-#         if language and language.lower() == "malayalam":
-#             summary_text = summary_data["malayalam"]
-#         else:
-#             summary_text = summary_data["english"]
+        if language and language.lower() == "malayalam":
+            summary_text = summary_data["malayalam"]
+        else:
+            summary_text = summary_data["english"]
 
-#         message = (
-#             f"📋 Lab Report Summary\n\n"
-#             f"{summary_text}\n\n"
-#             f"Status: {summary_data['status']}"
-#         )
+        message = (
+            f"📋 Lab Report Summary\n\n"
+            f"{summary_text}\n\n"
+            f"Status: {summary_data['status']}"
+        )
 
-#         send_whatsapp_message(phone, message)
+        send_whatsapp_message(phone, message)
 
-#         return {
-#             "success": True,
-#             "summary": summary_data
-#         }
+        return {
+            "success": True,
+            "summary": summary_data
+        }
 
-#     except Exception as e:
-#         print("WEBHOOK ERROR:", str(e))
-#         return {"error": str(e)}
+    except Exception as e:
+        print("WEBHOOK ERROR:", str(e))
+        return {"error": str(e)}
 
 
 async def process_pdf(request: Request, language: str):
