@@ -190,7 +190,9 @@ async def webhook(request: Request):
 
     try:
         data = await request.json()
-
+        print("CONTACT =", data.get("contact"))
+        print("MESSAGE =", data.get("message"))
+        print("ROOT =", data)
         print("=" * 50)
         print(json.dumps(data, indent=2))
         print("=" * 50)
@@ -231,6 +233,7 @@ async def webhook(request: Request):
         language = data["contact"].get("language_code")
 
         print("LANGUAGE =", language)
+        
 
         if language and language.lower() == "malayalam":
             summary_text = summary_data["malayalam"]
