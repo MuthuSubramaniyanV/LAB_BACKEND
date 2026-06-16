@@ -219,22 +219,20 @@ async def webhook(request: Request):
         print(summary_data)
         phone = data["contact"]["phone_number"]
 
-        language = data["contact"].get("result")
+        language = data["contact"].get("language_code")
 
         print("LANGUAGE =", language)
-        print("CONTACT DATA:")
-        print(data["contact"])
 
-        if language and language.lower() in ["malayalam", "ml"]:
+        if language and language.lower() == "malayalam":
             summary_text = summary_data["malayalam"]
         else:
             summary_text = summary_data["english"]
 
         message = (
-                f"📋 Lab Report Summary\n\n"
-                f"{summary_text}\n\n"
-                f"Status: {summary_data['status']}"
-            )
+            f"📋 Lab Report Summary\n\n"
+            f"{summary_text}\n\n"
+            f"Status: {summary_data['status']}"
+        )
 
         send_whatsapp_message(phone, message)
 
