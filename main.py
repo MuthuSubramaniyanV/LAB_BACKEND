@@ -58,16 +58,37 @@ Return ONLY valid JSON.
 }}
 
 Rules:
-- Use simple language
-- Maximum 100 words
-- Use emojis
+- Use very simple words that a non-medical person can understand
+- Use bullet points
+- Maximum 50 words
+- Mention only important test values
+- Mention whether the value is Normal, High, or Low
+- Use emojis where appropriate
 - Do not diagnose diseases
 - Do not prescribe medicines
-- Mention only important values
-- Add disclaimer
+- Do not mention medical jargon unless necessary
+- End with a short disclaimer
 - Return only JSON
 - Do not use markdown
 - Do not wrap response in ```json
+
+English Summary Format Example:
+
+• 🩸 Hemoglobin: 13.5 g/dL (Normal)
+• ☀️ Vitamin D: 18 ng/mL (Low)
+• 💪 Iron levels are normal
+
+⚠️ Please discuss these results with your doctor.
+This is only a simple AI-generated summary.
+
+Malayalam Summary Format Example:
+
+• 🩸 ഹീമോഗ്ലോബിൻ: 13.5 g/dL (സാധാരണം)
+• ☀️ വിറ്റാമിൻ D: 18 ng/mL (കുറവ്)
+• 💪 ഇരുമ്പിന്റെ അളവ് സാധാരണയാണ്
+
+⚠️ കൂടുതൽ വിവരങ്ങൾക്ക് ഡോക്ടറെ സമീപിക്കുക.
+ഇത് AI സൃഷ്ടിച്ച ലളിതമായ സംഗ്രഹം മാത്രമാണ്.
 
 Lab Report:
 {text[:15000]}
