@@ -175,6 +175,13 @@ def send_whatsapp_message(phone_number, message):
     print("SEND RESPONSE:", response.text)
 
     return response.text
+@app.post("/webhook-english")
+async def webhook_english(request: Request):
+    return await process_pdf(request, "english")
+
+@app.post("/webhook-malayalam")
+async def webhook_malayalam(request: Request):
+    return await process_pdf(request, "malayalam")
 
 @app.post("/webhook")
 async def webhook(request: Request):
@@ -244,3 +251,45 @@ async def webhook(request: Request):
     except Exception as e:
         print("WEBHOOK ERROR:", str(e))
         return {"error": str(e)}
+
+
+async def process_pdf(request: Request, language: str):
+
+    data = await request.json()
+
+    media = data.get("message", {}).get("media")
+
+    if not media:
+        return {"success": True}
+
+    if media.get("type") != "document":
+        return {"success": True}
+
+    pdf_url = media.get("link")
+
+    response = requests.get(pdf_url, timeout=60)
+
+    with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as temp_file:
+        temp_file.write(response.content)
+        pdf_path = temp_file.name
+
+    text = extract_text_from_pdf(pdf_path)
+
+    summary_data = generate_summary(text)
+
+    phone = data["contact"]["phone_number"]
+
+    if language == "malayalam":
+        summary_text = summary_data["malayalam"]
+    else:
+        summary_text = summary_data["english"]
+
+    message = (
+        f"📋 Lab Report Summary\n\n"
+        f"{summary_text}\n\n"
+        f"Status: {summary_data['status']}"
+    )
+
+    send_whatsapp_message(phone, message)
+
+    return {"success": True}
